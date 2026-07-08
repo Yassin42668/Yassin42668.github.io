@@ -50,12 +50,22 @@
   .iconbtn{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;color:var(--ink-soft);transition:background .16s,color .16s;flex:0 0 auto}
   .iconbtn:hover{background:var(--gold-wash);color:var(--ink)}
   .iconbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-  .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+  .brand{display:flex;align-items:baseline;gap:10px;min-width:0;cursor:pointer;user-select:none;}
   .brand .mark{font-family:var(--arabic);font-size:26px;color:var(--gold);line-height:1;transform:translateY(1px)}
   .brand .name{font-family:var(--display);font-size:20px;letter-spacing:.06em}
   .brand .sub{font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
   .spacer{flex:1}
   #menuBtn{display:none}
+
+  /* Page d'accueil */
+  .landing {position:fixed;inset:0;top:60px;background:var(--bg);z-index:35;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;transition:opacity .3s;overflow-y:auto;}
+  .landing h1 {font-family:var(--display);font-size:32px;color:var(--gold);margin-bottom:10px;}
+  .landing p {font-family:var(--ui);color:var(--ink-soft);margin-bottom:40px;}
+  .menu-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;width:100%;max-width:800px;}
+  .menu-card {background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px 16px;font-family:var(--ui);font-size:18px;font-weight:600;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(--shadow);transition:transform .15s, border-color .15s;}
+  .menu-card:hover {transform:translateY(-3px);border-color:var(--gold-soft);background:var(--gold-wash);}
+  .menu-card svg {width:40px;height:40px;stroke:var(--emerald);fill:none;stroke-width:1.5;}
+  .hidden {display: none !important;}
 
   .shell{position:fixed;top:60px;left:0;right:0;bottom:0;display:flex}
 
@@ -244,7 +254,8 @@
 
   @media (max-width:880px){
     #menuBtn{display:grid}
-    .sidebar{position:fixed;top:60px;bottom:0;left:0;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.3,1);box-shadow:8px 0 34px rgba(20,26,22,.18)}
+    /* Ajout du z-index: 60 pour corriger le bug de calque sur mobile */
+    .sidebar{position:fixed;top:60px;bottom:0;left:0;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.3,1);box-shadow:8px 0 34px rgba(20,26,22,.18); z-index:60;}
     .sidebar.show{transform:translateX(0)}
     .reader{padding:20px 16px 178px}
     .surah-ar{font-size:36px}
@@ -264,13 +275,36 @@
 <body>
   <header class="topbar">
     <button id="menuBtn" class="iconbtn" aria-label="Sourates"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-    <div class="brand"><span class="mark">نور</span><span class="name">Nūr</span><span class="sub">Coran · lecture &amp; récitation</span></div>
+    <div class="brand" id="goHome"><span class="mark">نور</span><span class="name">Nūr</span><span class="sub">Coran · lecture &amp; récitation</span></div>
     <span class="spacer"></span>
     <button id="bmBtn" class="iconbtn" aria-label="Marque-pages"><svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z"/></svg></button>
     <button id="themeBtn" class="iconbtn" aria-label="Mode jour / nuit"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
   </header>
 
-  <div class="shell">
+  <div class="landing" id="landingPage">
+    <h1>Bienvenue sur Nūr</h1>
+    <p>Sélectionnez un module pour commencer votre lecture ou vos recherches.</p>
+    <div class="menu-grid">
+      <button class="menu-card" id="goSourate">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        Sourates
+      </button>
+      <button class="menu-card" id="goHadith">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9M3 4h18M3 12h18"/></svg>
+        Ahadith
+      </button>
+      <button class="menu-card" id="goQibla">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        Qibla
+      </button>
+      <button class="menu-card" id="goMosquee">
+        <svg viewBox="0 0 24 24"><path d="M12 2L9 7h6zM5 11v11h14V11M9 22V15h6v7"/></svg>
+        Mosquées & Horaires
+      </button>
+    </div>
+  </div>
+
+  <div class="shell hidden" id="shell">
     <aside class="sidebar" id="sidebar">
       <div class="search"><div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="searchInput" type="text" placeholder="Rechercher une sourate…" autocomplete="off" spellcheck="false"></div></div>
       <div class="surah-list" id="surahList"></div>
@@ -302,7 +336,6 @@
     <div class="drawer-body" id="drawerBody"></div>
   </aside>
 
-  <!-- Recitation practice modal -->
   <div class="modal-back" id="recBack"></div>
   <div class="modal" id="recModal" role="dialog" aria-modal="true" aria-labelledby="recTitle">
     <div class="modal-head"><h2 id="recTitle">Récitation</h2>
@@ -325,12 +358,11 @@ const BITRATES=[128,64,48];
 const EDITIONS='quran-uthmani,en.transliteration,fr.hamidullah';
 const BISMILLAH='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
-/* Reciters served from everyayah (surah:ayah based) — includes the ones requested */
+/* Reciters served from everyayah (surah:ayah based) */
 const EA_RECITERS=[
   {id:'ea.yasserdossary', name:'Yasser Al-Dossari', src:'ea', folder:'Yasser_Ad-Dussary_128kbps'},
   {id:'ea.nasseralqatami', name:'Nasser Al-Qatami', src:'ea', folder:'Nasser_Alqatami_128kbps'}
 ];
-/* Pretty names for the Al Quran Cloud (islamic.network) reciters */
 const RN={
   'ar.alafasy':'Mishary Rashid Al-Afasy','ar.abdulbasitmurattal':'Abdul Basit ʿAbd us-Samad — Murattal',
   'ar.abdulsamad':'Abdul Basit — Moujawwad','ar.abdurrahmaansudais':'Abdurrahman As-Soudais',
@@ -559,7 +591,7 @@ function openDrawer(){renderBookmarks();$('drawer').classList.add('show');$('bac
 function closeDrawer(){$('drawer').classList.remove('show');$('backdrop').classList.remove('show');}
 function refreshBmStars(){document.querySelectorAll('.vbtn[data-act="bm"]').forEach(btn=>{const i=+btn.dataset.i,a=S.ayahs[i];if(a)btn.classList.toggle('on',isBookmarked(S.cur,a.num));});}
 
-/* ---------- Récitation (entraînement) ---------- */
+/* ---------- Récitation (entraînement type Tarteel) ---------- */
 let recognizer=null, recActive=false, recFinal='';
 function normArabic(s){return(s||'')
   .replace(/[\u0640]/g,'').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g,'')
@@ -586,7 +618,7 @@ function openRec(i){
     </div>
     <div class="rec-result" id="recResult"></div>
     <div class="rec-actions"><button id="recListen"><svg viewBox="0 0 24 24"><path d="M7 5v14l12-7z" fill="currentColor" stroke="none"/></svg>Écouter le verset</button></div>
-    <div class="rec-note">Outil d’entraînement à la mémorisation : il transcrit ta récitation et compare les <b>mots</b> au texte. Il ne vérifie pas le tajwîd et ne remplace pas un professeur. Nécessite Google Chrome (ordinateur ou Android) avec micro autorisé — la reconnaissance de l’arabe coranique reste approximative.</div>`;
+    <div class="rec-note">Outil d’entraînement à la mémorisation : il transcrit ta récitation et compare les <b>mots</b> au texte. Il ne vérifie pas le tajwîd et ne remplace pas un professeur. Nécessite Google Chrome (ordinateur ou Android) avec micro autorisé.</div>`;
   $('recMic').addEventListener('click',toggleRec);
   $('recListen').addEventListener('click',()=>playIndex(i));
   const hb=$('recHintBtn');if(hb)hb.addEventListener('click',()=>{const h=$('recHint');const show=h.hasAttribute('hidden');if(show){h.removeAttribute('hidden');hb.textContent='Masquer la phonétique';}else{h.setAttribute('hidden','');hb.textContent='Afficher la phonétique';}});
@@ -624,11 +656,26 @@ function analyzeRec(transcript){
   let col=score>=85?'var(--ok)':score>=55?'var(--gold)':'var(--miss)';
   let msg=score>=85?'Excellent, ta récitation correspond au verset.':score>=55?'Bien — quelques mots à revoir (en rouge).':'Continue à t’exercer. Les mots en rouge n’ont pas été reconnus.';
   setRecStatus('Analyse terminée. Touche le micro pour réessayer.','');setRecMic(false);
+  
   $('recResult').innerHTML=`
-    <div class="rec-score"><div class="num" style="color:${col}">${score}%</div><div class="lbl">${msg}</div></div>
-    <div class="rec-compare" dir="rtl">${compare}</div>
-    ${extras.length?`<div class="rec-heard">Mots entendus non reconnus dans le verset : <b>${esc(extras.join(' '))}</b></div>`:''}
-    <div class="rec-actions" style="margin-top:14px"><button class="prim" id="recAgain"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Réessayer</button></div>`;
+    <div class="rec-score">
+      <div class="num" style="color:${col}">${score}%</div>
+      <div class="lbl">${msg}</div>
+    </div>
+    <div class="rec-compare" dir="rtl">
+      <div style="font-size: 14px; color: var(--ink-faint); margin-bottom: 4px; text-align: center;">Texte original :</div>
+      ${compare}
+    </div>
+    <div class="rec-compare" dir="rtl" style="background: transparent; border: 1px dashed var(--line-strong); margin-top: 10px;">
+      <div style="font-size: 14px; color: var(--ink-faint); margin-bottom: 4px; text-align: center;">Ce qui a été entendu :</div>
+      ${hyp.disp.map((w,k)=>`<span class="w ${hypM[k]?'word-ok':'word-miss'}">${esc(w)}</span>`).join(' ')}
+    </div>
+    ${extras.length?`<div class="rec-heard" style="margin-top:12px;">Mots entendus hors contexte : <b>${esc(extras.join(' '))}</b></div>`:''}
+    <div class="rec-actions" style="margin-top:14px">
+      <button class="prim" id="recAgain">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Réessayer
+      </button>
+    </div>`;
   $('recAgain').addEventListener('click',startRec);
 }
 
@@ -648,6 +695,23 @@ function errState(t,m,retry){return `<div class="state"><span class="em">۞</spa
 
 /* Wire up */
 function bindUI(){
+  // --- Navigation Accueil ---
+  $('goSourate').addEventListener('click', () => {
+    $('landingPage').classList.add('hidden');
+    $('shell').classList.remove('hidden');
+  });
+  
+  $('goHome').addEventListener('click', () => {
+    $('landingPage').classList.remove('hidden');
+    $('shell').classList.add('hidden');
+  });
+
+  const devMsg = () => toast('Ce module est en cours de développement !');
+  $('goHadith').addEventListener('click', devMsg);
+  $('goQibla').addEventListener('click', devMsg);
+  $('goMosquee').addEventListener('click', devMsg);
+  // --------------------------
+
   $('searchInput').addEventListener('input',e=>renderList(e.target.value));
   $('surahList').addEventListener('click',e=>{const row=e.target.closest('.srow');if(row)openSurah(+row.dataset.n);});
   $('surahList').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const row=e.target.closest('.srow');if(row){e.preventDefault();openSurah(+row.dataset.n);}}});
